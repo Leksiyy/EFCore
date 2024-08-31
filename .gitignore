@@ -409,6 +409,3 @@ __pycache__/
 
 ./*.csproj
 
-!/EFCore.sln
-
-
