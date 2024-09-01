@@ -7,35 +7,57 @@ class Program
 {
     static void Main(string[] args)
     {
-        var builder = new ConfigurationBuilder();
-        builder.SetBasePath(Directory.GetCurrentDirectory());
-        builder.AddJsonFile("appsettings.json");
+        DbContextOptions<ApplicationContext> options = ApplicationOptionsSetter.SetOptions("DefaultConnection");
+
+        //recreate db
+        using (ApplicationContext db = new ApplicationContext(options))
+        {
+            db.Database.EnsureDeleted();
+            db.Database.EnsureCreated();
+        }
         
-        var config = builder.Build();
-        string connectionString = config.GetConnectionString("DefaultConnection");
-
-        var optionsBuilder = new DbContextOptionsBuilder<ApplicationContext>();
-        var options = optionsBuilder.UseSqlServer(connectionString).Options;
-
-        new Train
+        TrainActions.AddTrain(new Train
         {
             Color = 1,
             IsCoupe = false,
             Volume = 44,
             MaxSpeed = 120,
             Year = new DateTime(2020, 10, 10)
-        };
+        }, options);
+        TrainActions.AddTrain(new Train
+        {
+            Color = 7,
+            IsCoupe = true,
+            Volume = 36,
+            MaxSpeed = 100,
+            Year = new DateTime(2019, 10, 10)
+        }, options);
+        TrainActions.AddTrain(new Train
+        {
+            Color = 3,
+            IsCoupe = false,
+            Volume = 40,
+            MaxSpeed = 90,
+            Year = new DateTime(2019, 7, 4)
+        }, options);
+
+        List<Train> trains = TrainActions.ReciveTrains(options);
+
+        TrainActions.EditTrain(1, new Train
+        {
+            Color = 2, //changed from 1 to 2
+        }, options);
+        
+        trains = TrainActions.ReciveTrains(options);
+        
+        TrainActions.DeleteTrain(1, options);
+        
+        trains = TrainActions.ReciveTrains(options);
     }
 
-    class ApplicationContext : DbContext
+    static class TrainActions
     {
-        public ApplicationContext(DbContextOptions options) : base(options) {}
-        public DbSet<Train> Trains { get; set; }
-    }
-
-    class TrainActions
-    {
-        public void AddTrain(Train train, DbContextOptions<ApplicationContext> options)
+        static public void AddTrain(Train train, DbContextOptions<ApplicationContext> options)
         {
             using (ApplicationContext db = new ApplicationContext(options))
             {
@@ -45,7 +67,7 @@ class Program
             }
         }
 
-        public List<Train> ReciveTrains(DbContextOptions<ApplicationContext> options)
+        static public List<Train> ReciveTrains(DbContextOptions<ApplicationContext> options)
         {
             using (ApplicationContext db = new ApplicationContext(options))
             {
@@ -53,7 +75,7 @@ class Program
             }
         }
 
-        public void EditTrain(int id, Train editedTrain, DbContextOptions<ApplicationContext> options)
+        static public void EditTrain(int id, Train editedTrain, DbContextOptions<ApplicationContext> options)
         {
             using (ApplicationContext db = new ApplicationContext(options))
             {
@@ -71,7 +93,7 @@ class Program
             }
         }
 
-        public void DeleteTrain(int id, DbContextOptions<ApplicationContext> options)
+        static public void DeleteTrain(int id, DbContextOptions<ApplicationContext> options)
         {
             using (ApplicationContext db = new ApplicationContext(options))
             {
@@ -85,5 +107,4 @@ class Program
             }
         }
     }
-    
 }
