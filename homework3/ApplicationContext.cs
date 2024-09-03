@@ -10,6 +10,15 @@ public class ApplicationContext : DbContext
 
     public DbSet<User> Users { get; set; }
 
+    public static void RecreateDB()
+    {
+        using (ApplicationContext db = new ApplicationContext())
+        {
+            db.Database.EnsureDeleted();
+            db.Database.EnsureCreated();
+        }
+    }
+    
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.UseSqlServer(config.GetConnectionString("DefaultConnection"));

@@ -4,8 +4,25 @@ public static class Menu
 {
     public static void MainMenu()
     {
-        Console.WriteLine("1. Registration\n2. Login\n3. Exit\nEnter your choice:");
-        short.TryParse(Console.ReadLine(), out short choose);
+        while (Convert.ToBoolean(1))
+        {
+            Console.WriteLine("1. Registration\n2. Login\n3. Exit\nEnter your choice:");
+            short.TryParse(Console.ReadLine(), out short choose);
+            if (choose == 1)
+            {
+                Registration();
+            } else if (choose == 2)
+            {
+                Login();
+            } else if (choose == 3)
+            {
+                break;
+            }
+            else
+            {
+                Console.WriteLine("Invalid input, try one more time");
+            }
+        }
     }
 
     public static void Registration()
@@ -31,14 +48,21 @@ public static class Menu
     }
     public static void Login()
     {
-        Console.WriteLine("Enter your login.");
+        Console.WriteLine("Enter your login:");
         string login = Console.ReadLine();
-        Console.WriteLine("Enter your password.");
-        string password = Console.ReadLine();
         
         using (ApplicationContext db = new ApplicationContext())
         {
-            db.Users.Where(e => e.Login == login);
+            User? user = db.Users.FirstOrDefault(e => e.Login == login);
+            if (user != null)
+            {
+                Console.WriteLine("Enter your password:");
+                string password = Console.ReadLine();
+                if (PasswordHashBuilder.VerifyPassword(password, user.Password))
+                {
+                    Console.WriteLine("Successfully login.");
+                } else Console.WriteLine("Incorrect password.");
+            } else Console.WriteLine("User not found.");
         }
     }
 }
