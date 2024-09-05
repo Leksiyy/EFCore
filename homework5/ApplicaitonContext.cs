@@ -9,12 +9,13 @@ public class ApplicaitonContext : DbContext
     public DbSet<Guest> Guests { get; set; }
     public DbSet<EventGuest> EventGuests { get; set; }
 
-    private IConfigurationRoot config = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
+    private IConfigurationRoot config = new ConfigurationBuilder()
+        .SetBasePath(Directory.GetCurrentDirectory())
         .AddJsonFile("appsettings.json").Build();
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlServer(config.GetConnectionString("DefaultConneciton"));
+        optionsBuilder.UseSqlServer(config.GetConnectionString("DefaultConnection"));
         base.OnConfiguring(optionsBuilder);
     }
 
@@ -22,6 +23,9 @@ public class ApplicaitonContext : DbContext
     {
         modelBuilder.Entity<EventGuest>()
             .HasKey(eg => new { eg.EventId, eg.GuestId });
+
+        modelBuilder.Entity<EventGuest>().Property(e => e.EventId).IsRequired();
+        modelBuilder.Entity<EventGuest>().Property(e => e.GuestId).IsRequired();
 
         modelBuilder.Entity<EventGuest>()
             .HasOne(eg => eg.Event)
