@@ -32,11 +32,17 @@ class Program
 
             var users = repo.GetUsers();
 
-            repo.AddDelivery("Иван Иванов", "ул. Ленина, д. 1", "Наличные", "Ожидается", "Крупные", DateTime.Now, DateTime.Now.AddDays(5), 1);
+            repo.AddDelivery("Иван Иванов", "ул. Ленина, д. 1", "Наличные", "Ожидается", "Крупные", DateTime.Now, DateTime.Now.AddDays(5), 1, 699);
 
             var deliveries = repo.GetDeliveries();
 
             repo.DeleteDelivery(1);
+            
+            var totalOrdersPerUser = repo.GetTotalOrdersPerUser();
+
+            var totalSpentPerUser = repo.GetTotalSpentPerUser();
+
+            var mostExpensiveProductPerUser = repo.GetMostExpensiveProductPerUser();
         }
     }
 }
@@ -51,3 +57,7 @@ class Program
 // 4) Пользователи: Все данные по доставке, email, пароль. Возможность просмотров и удаление заказов.
 //  
 // Реализуйте необходимый функционал, используя классы и методы. Протестируйте ваше приложение. Для удобства, можете оформить все в отдельную библиотеку классов.
+
+//Общее количество заказов для каждого клиента.
+// Общая сумма, потраченная каждым клиентов.
+// Самый дорогой товар, купленный каждым клиентом.

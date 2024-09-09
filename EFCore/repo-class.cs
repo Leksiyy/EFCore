@@ -68,7 +68,7 @@ public class PerfumeStoreRepository
     }
 
     // --- доставка ---
-    public void AddDelivery(string fullName, string address, string paymentType, string status, string paymentDetails, DateTime shippingDate, DateTime deliveryDate, int userId)
+    public void AddDelivery(string fullName, string address, string paymentType, string status, string paymentDetails, DateTime shippingDate, DateTime deliveryDate, int userId, decimal totalAmount)
     {
         var delivery = new Delivery
         {
@@ -79,7 +79,8 @@ public class PerfumeStoreRepository
             PaymentDetails = paymentDetails,
             ShippingDate = shippingDate,
             DeliveryDate = deliveryDate,
-            UserId = userId
+            UserId = userId,
+            TotalAmount = totalAmount
         };
         _db.Deliveries.Add(delivery);
         _db.SaveChanges();
@@ -121,5 +122,48 @@ public class PerfumeStoreRepository
             _db.Users.Remove(user);
             _db.SaveChanges();
         }
+    }
+    
+    public Dictionary<string, int> GetTotalOrdersPerUser()
+    {
+        return _db.Users
+            .Select(u => new
+            {
+                u.Email,
+                TotalOrders = u.Deliveries.Count
+            })
+            .ToDictionary(x => x.Email, x => x.TotalOrders);
+    }
+
+    public Dictionary<string, decimal> GetTotalSpentPerUser()
+    {
+        return _db.Users
+            .Select(u => new
+            {
+                u.Email,
+                TotalSpent = u.Deliveries.Sum(d => d.TotalAmount)
+            })
+            .ToDictionary(x => x.Email, x => x.TotalSpent);
+    }
+
+    public Dictionary<string, Product> GetMostExpensiveProductPerUser()
+    {
+        var productPurchases = _db.Deliveries
+            .Include(d => d.User)
+            .Include(d => d.Products)
+            .SelectMany(d => d.Products.Select(p => new
+            {
+                d.User.Email,
+                Product = p
+            }))
+            .GroupBy(x => x.Email)
+            .Select(g => new
+            {
+                Email = g.Key,
+                MostExpensiveProduct = g.OrderByDescending(x => x.Product.RetailPrice).FirstOrDefault().Product
+            })
+            .ToDictionary(x => x.Email, x => x.MostExpensiveProduct);
+
+        return productPurchases;
     }
 }

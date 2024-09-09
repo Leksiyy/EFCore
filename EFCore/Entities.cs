@@ -34,6 +34,8 @@ public class Delivery
     public DateTime DeliveryDate { get; set; }
     public int UserId { get; set; }
     public User User { get; set; }
+    public decimal TotalAmount { get; set; }
+    public List<Product> Products { get; set; }
 }
 public class User
 {
