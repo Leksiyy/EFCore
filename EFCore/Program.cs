@@ -9,50 +9,34 @@ class Program
 {
     static void Main()
     {
-        using (ApplicationContext db = new ApplicationContext())
+        using (var db = new ApplicationContext())
         {
-            // новая категория
-            var category = new Category { Name = "Парфюмерия", Description = "Духи, одеколоны и т.д." };
-            db.Categories.Add(category);
-            db.SaveChanges();
+            var repo = new PerfumeStoreRepository(db);
 
-            // новый продукт
-            var product = new Product
-            {
-                Name = "Chanel No 5",
-                Description = "Классический женский парфюм",
-                PurchasePrice = 50,
-                RetailPrice = 100,
-                Quantity = 10,
-                Manufacturer = "Chanel",
-                ExpirationDate = DateTime.Now.AddYears(2),
-                CategoryId = category.Id
-            };
-            db.Products.Add(product);
-            db.SaveChanges();
+            repo.AddCategory("Парфюмерия", "Духи, одеколоны и парфюмерная вода.");
+            repo.AddCategory("Косметика", "Кремы, лосьоны и другие косметические средства.");
 
-            // новый пользователь и доставка
-            var user = new User { Email = "user@gmail.com", Password = "password" };
-            var delivery = new Delivery
-            {
-                FullName = "Иван Иванов",
-                Address = "ул. Ленина, д. 1",
-                PaymentType = "Наличные",
-                Status = "Ожидается",
-                PaymentDetails = "Безналичный расчет",
-                ShippingDate = DateTime.Now,
-                DeliveryDate = DateTime.Now.AddDays(5),
-                User = user
-            };
-            user.Deliveries.Add(delivery);
-            db.Users.Add(user);
-            db.SaveChanges();
+            var categories = repo.GetCategories();
 
-            // категории
-            var categories = db.Categories.ToList();
+            repo.DeleteCategory(2);
 
-            // товары
-            var products = db.Products.ToList();
+            repo.AddProduct("Chanel COCO", "Классический женский парфюм", 50, 100, 10, "Chanel", DateTime.Now.AddYears(2), 1);
+            repo.AddProduct("Jaguar Classic", "Мужская туалетная вода", 40, 80, 15, "Dior", DateTime.Now.AddYears(3), 1);
+
+            var products = repo.GetProducts();
+            
+            repo.DeleteProduct(2);
+
+            repo.AddUser("ivan@example.com", "password123");
+            repo.AddUser("maria@example.com", "password321");
+
+            var users = repo.GetUsers();
+
+            repo.AddDelivery("Иван Иванов", "ул. Ленина, д. 1", "Наличные", "Ожидается", "Крупные", DateTime.Now, DateTime.Now.AddDays(5), 1);
+
+            var deliveries = repo.GetDeliveries();
+
+            repo.DeleteDelivery(1);
         }
     }
 }
