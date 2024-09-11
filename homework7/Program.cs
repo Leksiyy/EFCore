@@ -16,33 +16,13 @@ class Program
                 .Select(e => new
                 {
                     Client = e,
-                    TotalOrderCount = e.Orders.Count
-                })
-                .ToList();
-
-            var linq2 = db.Clients
-                .Include(e => e.Orders)
-                .ThenInclude(e => e.OrderDetail)
-                .ThenInclude(e => e.Product)
-                .Select(e => new
-                {
-                    Client = e,
+                    TotalOrderCount = e.Orders.Count,
                     TotalSpend = e.Orders
                         .SelectMany(e => e.OrderDetail)
                         .Sum(e => e.Product.Price * e.Quantity),
-                })
-                .ToList();
-
-            var linq3 = db.Clients
-                .Include(e => e.Orders)
-                .ThenInclude(e => e.OrderDetail)
-                .ThenInclude(e => e.Product)
-                .Select(e => new
-                {
-                    Client = e,
-                    Product = e.Orders
+                    MostExpensiveProduct = e.Orders
                         .SelectMany(e => e.OrderDetail)
-                        .Select(o => o.Product.Price)
+                        .Select(e => e.Product.Price)
                         .Max()
                 })
                 .ToList();
@@ -56,3 +36,12 @@ class Program
 // Общая сумма, потраченная каждым клиентов.
 // Самый дорогой товар, купленный каждым клиентом.
 // 
+
+//Запрос должен вернуть список объектов со следующими свойствами:
+// 
+// Имя клиента
+// Электронная почта
+// Адрес
+// Общее количество заказов
+// Общая потраченная сумма
+// Название самого дорогого приобретенного товара
