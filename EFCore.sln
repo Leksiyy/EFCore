@@ -18,6 +18,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "homework7", "homework7\home
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookStore", "BookStore\BookStore.csproj", "{7FDC7747-9DB3-448F-834D-38E7A606AFF5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SQLrequests", "SQLrequests\SQLrequests.csproj", "{6C01C01E-F60B-4087-B0AC-0C0BD8C1E890}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Final", "Final\Final.csproj", "{24B21656-15CC-4260-A679-F3CE1EF422F8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -60,5 +64,13 @@ Global
 		{7FDC7747-9DB3-448F-834D-38E7A606AFF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7FDC7747-9DB3-448F-834D-38E7A606AFF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7FDC7747-9DB3-448F-834D-38E7A606AFF5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C01C01E-F60B-4087-B0AC-0C0BD8C1E890}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C01C01E-F60B-4087-B0AC-0C0BD8C1E890}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C01C01E-F60B-4087-B0AC-0C0BD8C1E890}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C01C01E-F60B-4087-B0AC-0C0BD8C1E890}.Release|Any CPU.Build.0 = Release|Any CPU
+		{24B21656-15CC-4260-A679-F3CE1EF422F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{24B21656-15CC-4260-A679-F3CE1EF422F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{24B21656-15CC-4260-A679-F3CE1EF422F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{24B21656-15CC-4260-A679-F3CE1EF422F8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
