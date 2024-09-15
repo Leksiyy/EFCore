@@ -1,26 +1,38 @@
+using BookStore.Interfaces;
+
 namespace BookStore.Helpers;
 
-public class ConsoleHelper
+public class ItemHelper
 {
     /// <summary>
     /// 
     /// </summary>
     /// <param name="canCancel"></param>
-    /// <param name="userEnum">Enum перечисление пользователя, по которому строим меню</param>
+    /// <param name="items">Enum перечисление пользователя, по которому строим меню</param>
     /// <param name="spacingPerLine">Количество отступов между столбиками</param>
     /// <param name="optionsPerLine">Количество значений в одном столбике</param>
     /// <param name="startX">Количество отступов с левой стороны консоли</param>
     /// <param name="startY">Количество отступов с верхней стороны консоли</param>
     /// <returns></returns>
-    public static int MultipleChoice(bool canCancel, Enum userEnum, int spacingPerLine = 18, int optionsPerLine = 3,
-        int startX = 1, int startY = 1)
+    public static int MultipleChoice<T>(bool canCancel, List<T> items, bool IsMenu = false, string message = null, int spacingPerLine = 18, int optionsPerLine = 3,
+        int startX = 1, int startY = 1) where T : IShow<int>, new()
     {
+        if (IsMenu)
+        {
+            items.Insert(0, new T() {Id = 0, Value = "[... Back]"});
+        }
+        
         int currentSelection = 0;
         ConsoleKey key;
         Console.CursorVisible = false;
-        int length = Enum.GetValues(userEnum.GetType()).Length;
+        int length = items.Count;
         do
         {
+            Console.Clear();
+            if (message is not null)
+            {
+                Console.WriteLine(message);
+            }
             Console.Clear();
             if (currentSelection >= length)
             {
@@ -34,7 +46,7 @@ public class ConsoleHelper
                 if (i == currentSelection)
                     Console.ForegroundColor = ConsoleColor.Red;
 
-                Console.Write(Enum.Parse(userEnum.GetType(), i.ToString()));
+                Console.Write(Enum.Parse(items.GetType(), i.ToString()));
 
                 Console.ResetColor();
             }

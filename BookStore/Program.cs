@@ -5,7 +5,7 @@ using BookStore.Repository;
 
 namespace BookStore
 {
-    class Program
+    public partial class Program
     {
         public static ApplicationContext DbContext() => new ApplicationContextFactory().CreateDbContext();
         private static IBook _books;
@@ -15,75 +15,67 @@ namespace BookStore
         
         enum ShopMenu
         {
-            Books, Authors, Categories, Orders, SearchAuthors, SearchBooks, SearchCategories, SearchOrders, AddBook, AddAuthor, AddCategory, AddOrder, RemoveBook, RemoveAuthor, RemoveCategory, RemoveOrder, UpdateBook, UpdateAuthor, UpdateCategory, UpdateOrder, Exit
+            Books, Authors, Categories, Orders, SearchAuthors, SearchBooks, SearchCategories, SearchOrders, AddBook, AddAuthor, AddCategory, AddOrder, Exit
         }
         
         static async Task Main()
-        {
-            Initialize();
-            int input = ConsoleHelper.MultipleChoice(true, new ShopMenu());
-            while (true)
-            {
-                switch (input)
-                {
-                    case (int)ShopMenu.Books:
-                        Console.Clear();
-                        Console.WriteLine(_books.GetAllBooksAsync());
-                        Console.WriteLine("Press any key to continue");
-                        Console.ReadKey();
-                        break;
-                    case (int)ShopMenu.Authors:
-                        Console.Clear();
-                        Console.WriteLine(_authors.GetAllAuthorsAsync());
-                        Console.WriteLine("Press any key to continue");
-                        Console.ReadKey();
-                        break;
-                    case (int)ShopMenu.Categories:
-                        Console.Clear();
-                        Console.WriteLine(_categories.GetAllCategoriesAsync());
-                        Console.WriteLine("Press any key to continue");
-                        Console.ReadKey();
-                        break;
-                    case (int)ShopMenu.Orders:
-                        Console.Clear();
-                        Console.WriteLine(_orders.GetAllOrdersAsync());
-                        Console.WriteLine("Press any key to continue");
-                        Console.ReadKey();
-                        break;
-                                        
-                    //---
+        { 
+            // Initialize();
 
-                    case (int)ShopMenu.SearchAuthors:
-                        Console.Clear();
-                        //Console.WriteLine(_authors.GetAllOrdersAsync());
-                        Console.WriteLine("Press any key to continue");
-                        Console.ReadKey();
+            int input = new int();
+            do
+            {
+                input = ConsoleHelper.MultipleChoice(true, new ShopMenu());
+
+                switch ((ShopMenu)input)
+                {
+                    case ShopMenu.Books:
+                        await BookService.ReviewBooks();
                         break;
-                    case (int)ShopMenu.SearchBooks:
-                        Console.Clear();
-                        //Console.WriteLine(_books.GetAllOrdersAsync());
-                        Console.WriteLine("Press any key to continue");
-                        Console.ReadKey();
+                    case ShopMenu.Authors:
+                        await AuthorService.ReviewAuthors();
+                        break; 
+                    case ShopMenu.Categories:
+                        await CategoryService.ReviewCategory();
                         break;
-                    case (int)ShopMenu.SearchCategories:
-                        Console.Clear();
-                        //Console.WriteLine(_categories.GetAllOrdersAsync());
-                        Console.WriteLine("Press any key to continue");
-                        Console.ReadKey();
+                    case ShopMenu.Orders:
+                        await OrderService.ReviewOrders();
                         break;
-                    case (int)ShopMenu.SearchOrders:
-                        Console.Clear();
-                        Console.WriteLine(_orders.GetAllOrdersAsync());
-                        Console.WriteLine("Press any key to continue");
-                        Console.ReadKey();
+                    case ShopMenu.SearchAuthors:
+                        await AuthorService.SearchAuthor();
+                        break;
+                    case ShopMenu.SearchBooks:
+                        await BookService.SearchBook();
+                        break;
+                    case ShopMenu.SearchCategories:
+                        await CategoryService.SearchCategory();
+                        break;
+                    case ShopMenu.SearchOrders:
+                        await OrderService.SearchOrder();
+                        break;
+                    case ShopMenu.AddBook:
+                        await BookService.AddBook();
+                        break;  
+                    case ShopMenu.AddAuthor:
+                        await AuthorService.AddAuthor();
+                        break;
+                    case ShopMenu.AddCategory:
+                        await CategoryService.AddCategory();
+                        break;
+                    case ShopMenu.AddOrder:
+                        await OrderService.AddOrder();
+                        break;
+                    case ShopMenu.Exit:
                         break;
                 }
-            }
+                
+            } while (true);
         }
         static void Initialize()
         {
             new DbInit().Init(DbContext());
             _books = new BookRepository();
+            _authors = new AuthorRepository();
         }
     }
 }
