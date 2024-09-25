@@ -33,7 +33,6 @@ public class ItemHelper
             {
                 Console.WriteLine(message);
             }
-            Console.Clear();
             if (currentSelection >= length)
             {
                 currentSelection--;
@@ -46,7 +45,8 @@ public class ItemHelper
                 if (i == currentSelection)
                     Console.ForegroundColor = ConsoleColor.Red;
 
-                Console.Write(Enum.Parse(items.GetType(), i.ToString()));
+                //Console.Write(Enum.Parse(items.GetType(), i.ToString()));
+                Console.Write(items[i].Value.ToString());
 
                 Console.ResetColor();
             }

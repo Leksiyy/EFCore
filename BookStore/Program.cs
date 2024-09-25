@@ -20,12 +20,11 @@ namespace BookStore
         
         static async Task Main()
         { 
-            // Initialize();
-
-            int input = new int();
+            Initialize();
+            
             do
             {
-                input = ConsoleHelper.MultipleChoice(true, new ShopMenu());
+                var input = ConsoleHelper.MultipleChoice(true, new ShopMenu());
 
                 switch ((ShopMenu)input)
                 {
@@ -76,6 +75,8 @@ namespace BookStore
             new DbInit().Init(DbContext());
             _books = new BookRepository();
             _authors = new AuthorRepository();
+            _categories = new CategoryRepository();
+            _orders = new OrderRepository();
         }
     }
 }

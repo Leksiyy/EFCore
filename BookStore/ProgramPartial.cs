@@ -1,3 +1,4 @@
+using System.Dynamic;
 using BookStore.Helpers;
 using BookStore.Models;
 using BookStore.ViewModels;
@@ -32,6 +33,17 @@ public partial class Program
             {
                 case 1:
                     // <------------ вызов метода с выводом книг данного автора
+                    var booksAndAuthors = await _books.GetAllBooksWithAuthorsAsync();
+                    var books = booksAndAuthors
+                        .Where(e => e.Authors.Any(a => a.Name == currentAuthor.Name))
+                        .ToList();
+                    List<ItemView> list = books.Select(e => new ItemView
+                    {
+                        Id = e.Id,
+                        Value = e.Title,
+                    }).ToList();
+                    
+                    ItemHelper.MultipleChoice(true, list, true);
                     break;
                 case 2:
                     await EditAuthor(currentAuthor);
@@ -76,7 +88,7 @@ public partial class Program
         {
             string authorName = InputHelper.GetString("author name or surname");
             var currentAuthors = await _authors.GetAuthorsByNameAsync(authorName);
-            if (!currentAuthors.Any())
+            if (currentAuthors.Any())
             {
                 var authors = currentAuthors.Select(e => new ItemView { Id = e.Id, Value = e.Name }).ToList();
                 int result = ItemHelper.MultipleChoice(true, authors, true);
@@ -102,7 +114,7 @@ public partial class Program
             int input = ItemHelper.MultipleChoice(true, books, true);
             if (input != 0)
             {
-                var currentBook = await _books.GetBookAsync(input);
+                var currentBook = await _books.GetBookWithAuthorsAsync(books[input].Id);
                 await BookInfo(currentBook);
             }
         }
@@ -118,9 +130,9 @@ public partial class Program
             switch (input)
             {
                 case 1:
-                    int input2 = ItemHelper.MultipleChoice(true, currentBook.Authors.Select(e => new { Id = e.Id, Value = e.Name }) as List<ItemView>, true);
-                    await AuthorService.AuthorInfo(currentBook.Authors.First(e => e.Id == input2));
-                    Console.WriteLine();
+                    List<ItemView> list =
+                        currentBook.Authors.Select(e => new ItemView { Id = e.Id, Value = e.Name }).ToList();
+                    int input2 = ItemHelper.MultipleChoice(true, list, true);
                     break;
                 case 2:
                     await EditBook(currentBook);
@@ -192,13 +204,13 @@ public partial class Program
         {
             string bookName = InputHelper.GetString("book title");
             var currentBooks = await _books.GetBooksByNameAsync(bookName);
-            if (!currentBooks.Any())
+            if (currentBooks.Any())
             {
                 var books = currentBooks.Select(e => new ItemView { Id = e.Id, Value = e.Title }).ToList();
                 int result = ItemHelper.MultipleChoice(true, books, true);
                 if (result != 0)
                 {
-                    var currentBook = await _books.GetBookAsync(result);
+                    var currentBook = await _books.GetBookWithAuthorsAsync(books[result].Id);
                     await BookInfo(currentBook);
                 }
             }
@@ -226,8 +238,8 @@ public partial class Program
         {
             int input = ItemHelper.MultipleChoice(true, new List<ItemView>
             {
-                new ItemView { Id = 2, Value = "Edit order" },
-                new ItemView { Id = 3, Value = "Delete order" },
+                new ItemView { Id = 1, Value = "Edit order" },
+                new ItemView { Id = 2, Value = "Delete order" },
             }, true, message: String.Format("{0}\n", currentOrder.Id), startY: 5, optionsPerLine: 1);
 
             switch (input)
@@ -293,7 +305,7 @@ public partial class Program
                 }, message: String.Format("[Are you sure you want to delete the order {0} ?\n", order.Id),
                 startY: 2);
 
-            if (result == 1)
+            if (result == 0)
             {
                 await _orders.DeleteOrderAsync(order);
             }
@@ -302,13 +314,13 @@ public partial class Program
         {
             string orderName = InputHelper.GetString("cusotmer name");
             var currentOrders = await _orders.GetAllOrdersByNameAsync(orderName);
-            if (!currentOrders.Any())
+            if (currentOrders.Any())
             {
                 var orders = currentOrders.Select(e => new ItemView { Id = e.Id, Value = e.CustomerName }).ToList();
                 int result = ItemHelper.MultipleChoice(true, orders, true);
                 if (result != 0)
                 {
-                    var currentOrder = await _orders.GetOrderAsync(result);
+                    var currentOrder = await _orders.GetOrderAsync(orders[result].Id);
                     await OrderInfo(currentOrder);
                 }
             }
@@ -402,7 +414,7 @@ public partial class Program
         {
             string categoryName = InputHelper.GetString("category name");
             var currentCategories = await _categories.GetCategoriesByNameAsync(categoryName);
-            if (!currentCategories.Any())
+            if (currentCategories.Any())
             {
                 var orders = currentCategories.Select(e => new ItemView { Id = e.Id, Value = e.Name }).ToList();
                 int result = ItemHelper.MultipleChoice(true, orders, true);
